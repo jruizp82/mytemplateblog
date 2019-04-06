@@ -1,5 +1,5 @@
-from tinymce import HTMLField
 from django.db import models
+from tinymce import HTMLField
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
