@@ -41,7 +41,7 @@ def get_category_count():
 def index(request):
     featured = Post.objects.filter(featured=True)
     latest = Post.objects.order_by('-timestamp')[0:3]
-
+    form = EmailSignupForm()
     if request.method == "POST":
         email = request.POST["email"]
         new_signup = Signup()

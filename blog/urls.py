@@ -14,7 +14,7 @@ urlpatterns = [
     path('', index),
     path('blog/', blog, name='post-list'),
     path('search/', search, name='search'),
-    path('email-signup/', email_list_signup, name='email-list-signup'),
+    path('subscribe/', email_list_signup, name='subscribe'),
     path('create/', post_create, name='post-create'),
     path('post/<id>/', post, name='post-detail'),
     path('post/<id>/update/', post_update, name='post-update'),

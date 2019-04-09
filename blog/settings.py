@@ -17,7 +17,6 @@ DEBUG = (os.environ.get('DEBUG_VALUE') == 'True')
 
 ALLOWED_HOSTS = ['mytemplateblog.herokuapp.com']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -168,9 +167,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'statusbar': True,
 }
 
-MAILCHIMP_API_KEY = ''
-MAILCHIMP_DATA_CENTER = ''
-MAILCHIMP_EMAIL_LIST_ID = ''
+MAILCHIMP_API_KEY = '66c049bcf074831870c3daaa109afd4a-us20'
+MAILCHIMP_DATA_CENTER = 'us20'
+MAILCHIMP_EMAIL_LIST_ID = '6424003fe8'
 
 # Django Allauth
 
