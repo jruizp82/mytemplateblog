@@ -145,6 +145,7 @@ class PostDetailView(DetailView):
     def post(self, request, *args, **kwargs):
         form = CommentForm(request.POST)
         if form.is_valid():
+            post = self.get_object()
             form.instance.user = request.user
             form.instance.post = self.get_object()
             form.save()
