@@ -11,13 +11,11 @@ from marketing.models import Signup
 
 form = EmailSignupForm()
 
-
 def get_author(user):
     qs = Author.objects.filter(user=user)
     if qs.exists():
         return qs[0]
     return None
-
 
 def search(request):
     queryset = Post.objects.all()
@@ -32,14 +30,12 @@ def search(request):
     }
     return render(request, 'search_results.html', context)
 
-
 def get_category_count():
     queryset = Post \
         .objects \
         .values('categories__title') \
         .annotate(Count('categories__title'))
     return queryset
-
 
 class IndexView(View):
     form = EmailSignupForm()
@@ -50,7 +46,7 @@ class IndexView(View):
         context = {
             'object_list': featured,
             'latest': latest,
-            'form': form
+            'form': self.form
         }
         return render(request, 'index.html', context)
 
@@ -61,7 +57,6 @@ class IndexView(View):
         new_signup.save()
         messages.info(request, "Succesfully subscribed")
         return redirect("home")
-
 
 def index(request):
     featured = Post.objects.filter(featured=True)
@@ -76,10 +71,9 @@ def index(request):
     context = {
         'object_list': featured,
         'latest': latest,
-        'form': form
+        'form': self.form
     }
     return render(request, 'index.html', context)
-
 
 class PostListView(ListView):
     form = EmailSignupForm()
@@ -95,11 +89,10 @@ class PostListView(ListView):
         context['most_recent'] = most_recent
         context['page_request_var'] = "page"
         context['category_count'] = category_count
-        context['form'] = form
+        context['form'] = self.form
         return context
 
 # def blog(request):
-
 
 def post_list(request):
     category_count = get_category_count()
@@ -123,6 +116,41 @@ def post_list(request):
         'form': form
     }
     return render(request, 'blog.html', context)
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'post.html'
+    context_object_name = 'post'
+    form = CommentForm()
+
+    def get_object(self):
+        obj = super().get_object()
+        if self.request.user.is_authenticated:
+            PostView.objects.get_or_create(
+                user=self.request.user, 
+                post=obj
+            )
+        return obj
+
+    def get_context_data(self, **kwargs):
+        category_count = get_category_count()
+        most_recent = Post.objects.order_by('-timestamp')[:3]
+        context = super().get_context_data(**kwargs)
+        context['most_recent'] = most_recent
+        context['page_request_var'] = "page"
+        context['category_count'] = category_count
+        context['form'] = self.form
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.instance.user = request.user
+            form.instance.post = self.get_object()
+            form.save()
+            return redirect(reverse("post-detail", kwargs={
+                'pk': post.pk
+            }))
 
 
 def post_detail(request, id):
