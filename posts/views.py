@@ -213,6 +213,22 @@ def post_create(request):
     }
     return render(request, "post_create.html", context)
 
+class PostUpdateView(UpdateView):
+    model = Post
+    template_name = 'post_create.html'
+    form_class = PostForm
+
+    def get_context_data(self, **kwargs):        
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Update'        
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = get_author(self.request.user)
+        form.save()
+        return redirect(reverse("post-detail", kwargs={
+            'pk': form.instance.pk
+        }))
 
 def post_update(request, id):
     title = 'Update'
