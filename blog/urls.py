@@ -15,7 +15,8 @@ from posts.views import (
     PostListView,
     PostDetailView,
     PostCreateView,
-    PostUpdateView
+    PostUpdateView,
+    PostDeleteView
 )
 from marketing.views import email_list_signup
 
@@ -33,7 +34,8 @@ urlpatterns = [
     path('post/<pk>/', PostDetailView.as_view(), name='post-detail'),
     # path('post/<pk>/update/', post_update, name='post-update'),
     path('post/<pk>/update/', PostUpdateView.as_view(), name='post-update'),
-    path('post/<pk>/delete/', post_delete, name='post-delete'),
+    # path('post/<pk>/delete/', post_delete, name='post-delete'),
+    path('post/<pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('tinymce/', include('tinymce.urls')),
     path('accounts/', include('allauth.urls'))
 ]

@@ -251,6 +251,10 @@ def post_update(request, id):
     }
     return render(request, "post_create.html", context)
 
+class PostDeleteView(DeleteView):
+    model = Post
+    succes_url = '/blog'
+    template_name = 'post_confirm_delete.html'
 
 def post_delete(request, id):
     post = get_object_or_404(Post, id=id)
