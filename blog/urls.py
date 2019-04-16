@@ -5,13 +5,15 @@ from django.urls import path, include
 
 from posts.views import (
     index, blog, post, search,
-    post_create, post_update, post_delete
+    post_create, post_update, post_delete,
+    IndexView
 )
 from marketing.views import email_list_signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index),
+    # path('', index),
+    path('', IndexView.as_view(), name='home'),
     path('blog/', blog, name='post-list'),
     path('search/', search, name='search'),
     path('subscribe/', email_list_signup, name='subscribe'),

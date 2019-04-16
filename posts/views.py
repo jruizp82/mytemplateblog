@@ -1,6 +1,9 @@
 from django.db.models import Count, Q
+from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.views.generic import View
+
 from .forms import CommentForm, PostForm
 from .models import Post, Author, PostView
 from marketing.forms import EmailSignupForm
@@ -37,6 +40,25 @@ def get_category_count():
         .annotate(Count('categories__title'))
     return queryset
 
+class IndexView(View):
+    form = EmailSignupForm()
+    def get(self, request, *args, **kwargs):
+        featured = Post.objects.filter(featured=True)
+        latest = Post.objects.order_by('-timestamp')[0:3]
+        context = {
+            'object_list': featured,
+            'latest': latest,
+            'form': form
+        }
+        return render(request, 'index.html', context)
+    
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get("email")
+        new_signup = Signup()
+        new_signup.email = email
+        new_signup.save()
+        messages.info(request, "Succesfully subscribed")
+        return redirect("home")
 
 def index(request):
     featured = Post.objects.filter(featured=True)
