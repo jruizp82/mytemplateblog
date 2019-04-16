@@ -2,7 +2,7 @@ from django.db.models import Count, Q
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.views.generic import View
+from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import CommentForm, PostForm
 from .models import Post, Author, PostView
@@ -40,8 +40,10 @@ def get_category_count():
         .annotate(Count('categories__title'))
     return queryset
 
+
 class IndexView(View):
     form = EmailSignupForm()
+
     def get(self, request, *args, **kwargs):
         featured = Post.objects.filter(featured=True)
         latest = Post.objects.order_by('-timestamp')[0:3]
@@ -51,7 +53,7 @@ class IndexView(View):
             'form': form
         }
         return render(request, 'index.html', context)
-    
+
     def post(self, request, *args, **kwargs):
         email = request.POST.get("email")
         new_signup = Signup()
@@ -59,6 +61,7 @@ class IndexView(View):
         new_signup.save()
         messages.info(request, "Succesfully subscribed")
         return redirect("home")
+
 
 def index(request):
     featured = Post.objects.filter(featured=True)
@@ -78,7 +81,27 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def blog(request):
+class PostListView(ListView):
+    form = EmailSignupForm()
+    model = Post
+    template_name = 'blog.html'
+    context_object_name = 'queryset'
+    paginate_by = 1
+
+    def get_context_data(self, **kwargs):
+        category_count = get_category_count()
+        most_recent = Post.objects.order_by('-timestamp')[:3]
+        context = super().get_context_data(**kwargs)
+        context['most_recent'] = most_recent
+        context['page_request_var'] = "page"
+        context['category_count'] = category_count
+        context['form'] = form
+        return context
+
+# def blog(request):
+
+
+def post_list(request):
     category_count = get_category_count()
     most_recent = Post.objects.order_by('-timestamp')[:3]
     post_list = Post.objects.all()
@@ -102,7 +125,7 @@ def blog(request):
     return render(request, 'blog.html', context)
 
 
-def post(request, id):
+def post_detail(request, id):
     category_count = get_category_count()
     most_recent = Post.objects.order_by('-timestamp')[:3]
     post = get_object_or_404(Post, id=id)
