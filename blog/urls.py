@@ -16,7 +16,8 @@ from posts.views import (
     PostDetailView,
     PostCreateView,
     PostUpdateView,
-    PostDeleteView
+    PostDeleteView,
+    SearchView
 )
 from marketing.views import email_list_signup
 
@@ -26,7 +27,8 @@ urlpatterns = [
     path('', IndexView.as_view(), name='home'),
     # path('blog/', post_list, name='post-list'),
     path('blog/', PostListView.as_view(), name='post-list'),
-    path('search/', search, name='search'),
+    # path('search/', search, name='search'),
+    path('search/', SearchView.as_view(), name='search'),
     path('subscribe/', email_list_signup, name='subscribe'),
     # path('create/', post_create, name='post-create'),
     path('create/', PostCreateView.as_view(), name='post-create'),

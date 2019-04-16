@@ -17,6 +17,20 @@ def get_author(user):
         return qs[0]
     return None
 
+class SearchView(View):
+    def get(self, request, *args, **kwargs):
+        queryset = Post.objects.all()
+        query = request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) |
+                Q(overview__icontains=query)
+            ).distinct()
+        context = {
+            'queryset': queryset
+        }
+        return render(request, 'search_results.html', context)
+
 def search(request):
     queryset = Post.objects.all()
     query = request.GET.get('q')
