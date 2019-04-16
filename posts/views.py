@@ -253,7 +253,7 @@ def post_update(request, id):
 
 class PostDeleteView(DeleteView):
     model = Post
-    succes_url = '/blog'
+    success_url = '/blog'
     template_name = 'post_confirm_delete.html'
 
 def post_delete(request, id):
